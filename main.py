@@ -35,11 +35,11 @@ def main(token, month, year):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Export a monthly csv file for up transactions')
-    parser.add_argument('month', metavar='m', type=int,
+    parser.add_argument('month', metavar='month', type=int,
                     help='month to retrieve transactions for')
-    parser.add_argument('year', metavar='y', type=int,
+    parser.add_argument('year', metavar='year', type=int,
                     help='year to retrieve transactions for')
-    parser.add_argument('token', metavar='t',
+    parser.add_argument('token', metavar='token',
                     help='personal id token')
     args = parser.parse_args()
 

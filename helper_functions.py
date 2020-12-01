@@ -42,9 +42,8 @@ def create_accounts_dict(row):
 def transform_row(transaction):
     attributes_dict = transaction['attributes']
     attributes_dict.update({'amount':  transaction['attributes']['amount']['value']})
-    #attributes_dict.update({'holdInfo':  transaction['attributes']['holdInfo']['value']})
-    #attributes_dict.update({'currencyCode': transaction['attributes']['amount']['currencyCode']})
-    category = transaction['relationships']['category']['data']['id'] if transaction['relationships']['category']['data'] != None else None
-    #tags = ','.join(transaction['relationships']['tags']['data']['tags'])
+    holdInfo = transaction['attributes']['holdInfo'].get('value') if transaction['attributes']['holdInfo'] != None else None
+    attributes_dict.update({'holdInfo':  holdInfo})
+    category = transaction['relationships']['category']['data'].get('id') if transaction['relationships']['category']['data'] != None else None
     attributes_dict.update({'category': category})
     return attributes_dict
