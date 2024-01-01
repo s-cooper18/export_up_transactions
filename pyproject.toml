@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "export-up-transactions"
+version = "0.1.0"
+description = "Export transactions for given month of Up bank without needing the app."
+authors = ["Suzannah Cooper <suzannah.cooper@outlook.com>"]
+readme = "README.md"
+packages = [{include = "export_up_transactions"}]
+
+[tool.poetry.dependencies]
+python = "~3.11.0"
+pandas = "^2.1.4"
+requests = "^2.31.0"
+types-requests = "^2.31.0.20231231"
+pandas-stubs = "^2.1.4.231227"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
