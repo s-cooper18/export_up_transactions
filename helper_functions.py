@@ -1,49 +1,62 @@
 import requests
 
-def create_accounts_dict(row):
+
+def create_accounts_dict(
+    row: dict[str, dict[str, dict[str, object]]]
+) -> dict[str, object]:
     my_dict = {
-        'displayName': row['attributes']['displayName'],
-        'id': row['id'],
-        'balance': row['attributes']['balance']['value']
+        "displayName": row["attributes"]["displayName"],
+        "id": row["id"],
+        "balance": row["attributes"]["balance"]["value"],
     }
     return my_dict
 
-def calc_start_end_strings(month, year):
-    timezoneStr = 'T00:00:00+10:00'
-    startDate = '-'.join([str(year), str(month).zfill(2), '01'])
-    endDate = '-'.join([str(year), str(month + 1).zfill(2), '01'])
+
+def calc_start_end_strings(month: int, year: int) -> list[str]:
+    timezoneStr = "T00:00:00+10:00"
+    startDate = "-".join([str(year), str(month).zfill(2), "01"])
+    endDate = "-".join([str(year), str(month + 1).zfill(2), "01"])
     return [startDate + timezoneStr, endDate + timezoneStr]
 
-def retrieve_all_transactions(token, params, transactionsEndpoint):
+
+def retrieve_all_transactions(
+    token: str, params: dict, transactionsEndpoint: str
+) -> list:
     all_transactions = []
     urls = [transactionsEndpoint]
     next_url = urls[0]
-    while (next_url is not None and len(urls) < 10):
-        response = requests.get(next_url, headers={'Authorization': 'Bearer ' + token}, params=params)
-        all_transactions.extend(response.json()['data'])
-        next_url = response.json()['links']['next']
+    while next_url is not None and len(urls) < 10:
+        response = requests.get(
+            next_url, headers={"Authorization": "Bearer " + token}, params=params
+        )
+        all_transactions.extend(response.json()["data"])
+        next_url = response.json()["links"]["next"]
         urls.append(next_url)
     return all_transactions
 
-def get_accounts(token):
-    accountEndpoint ='https://api.up.com.au/api/v1/accounts'
-    response = requests.get(accountEndpoint, headers={'Authorization': 'Bearer ' + token})
-    accounts = [create_accounts_dict(account) for account in response.json()['data']]
+
+def get_accounts(token: str) -> list[dict]:
+    accountEndpoint = "https://api.up.com.au/api/v1/accounts"
+    response = requests.get(
+        accountEndpoint, headers={"Authorization": "Bearer " + token}
+    )
+    accounts = [create_accounts_dict(account) for account in response.json()["data"]]
     return accounts
 
-def create_accounts_dict(row):
-    my_dict = {
-        'displayName': row['attributes']['displayName'],
-        'id': row['id'],
-        'balance': row['attributes']['balance']['value']
-    }
-    return my_dict
 
-def transform_row(transaction):
-    attributes_dict = transaction['attributes']
-    attributes_dict.update({'amount':  transaction['attributes']['amount']['value']})
-    holdInfo = transaction['attributes']['holdInfo'].get('value') if transaction['attributes']['holdInfo'] != None else None
-    attributes_dict.update({'holdInfo':  holdInfo})
-    category = transaction['relationships']['category']['data'].get('id') if transaction['relationships']['category']['data'] != None else None
-    attributes_dict.update({'category': category})
+def transform_row(transaction: dict) -> dict:
+    attributes_dict = transaction["attributes"]
+    attributes_dict.update({"amount": transaction["attributes"]["amount"]["value"]})
+    holdInfo = (
+        transaction["attributes"]["holdInfo"].get("value")
+        if transaction["attributes"]["holdInfo"] != None
+        else None
+    )
+    attributes_dict.update({"holdInfo": holdInfo})
+    category = (
+        transaction["relationships"]["category"]["data"].get("id")
+        if transaction["relationships"]["category"]["data"] != None
+        else None
+    )
+    attributes_dict.update({"category": category})
     return attributes_dict
