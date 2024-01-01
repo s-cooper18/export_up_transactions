@@ -1,3 +1,4 @@
+import datetime
 import requests
 
 
@@ -13,10 +14,15 @@ def create_accounts_dict(
 
 
 def calc_start_end_strings(month: int, year: int) -> list[str]:
-    timezoneStr = "T00:00:00+10:00"
-    startDate = "-".join([str(year), str(month).zfill(2), "01"])
-    endDate = "-".join([str(year), str(month + 1).zfill(2), "01"])
-    return [startDate + timezoneStr, endDate + timezoneStr]
+    aest_tz = datetime.timezone(datetime.timedelta(hours=10))
+    
+    start_date = datetime.datetime(year, month, 1, tzinfo=aest_tz)
+    
+    end_year = year + (month // 12)
+    end_month = (month % 12) + 1
+    
+    end_date = datetime.datetime(end_year, end_month, 1, tzinfo=aest_tz)
+    return [start_date.isoformat(), end_date.isoformat()]
 
 
 def retrieve_all_transactions(
