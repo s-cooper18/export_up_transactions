@@ -1,6 +1,7 @@
 import pandas as pd
 import helper_functions
 import argparse
+import os
 
 # function to obtain my transactions and save to a csv file
 
@@ -58,8 +59,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "year", metavar="year", type=int, help="year to retrieve transactions for"
     )
-    parser.add_argument("token", metavar="token", help="personal id token")
     args = parser.parse_args()
+    
+    token = os.getenv('UP_TOKEN')
+    if not token:
+        raise Exception("Missing env variable UP_TOKEN expected.")
 
-    main(args.token, args.month, args.year)
+    main(token, args.month, args.year)
     print("file saved")
