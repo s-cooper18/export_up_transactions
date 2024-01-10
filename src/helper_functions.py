@@ -1,5 +1,20 @@
-import datetime
+from datetime import datetime, timezone, timedelta
 import requests
+from dataclasses import dataclass
+from src import up_api
+
+
+@dataclass
+class DataRow:
+    status: str
+    raw_text: str
+    description: str
+    message: str
+    amount: str
+    created_at: str
+    category: str
+    tags: str
+    currency_code: str
 
 
 def create_accounts_dict(
@@ -14,30 +29,31 @@ def create_accounts_dict(
 
 
 def calc_start_end_strings(month: int, year: int) -> list[str]:
-    aest_tz = datetime.timezone(datetime.timedelta(hours=10))
-    
-    start_date = datetime.datetime(year, month, 1, tzinfo=aest_tz)
-    
+    aest_tz = timezone(timedelta(hours=10))
+
+    start_date = datetime(year, month, 1, tzinfo=aest_tz)
+
     end_year = year + (month // 12)
     end_month = (month % 12) + 1
-    
-    end_date = datetime.datetime(end_year, end_month, 1, tzinfo=aest_tz)
+
+    end_date = datetime(end_year, end_month, 1, tzinfo=aest_tz)
     return [start_date.isoformat(), end_date.isoformat()]
 
 
 def retrieve_all_transactions(
-    token: str, params: dict, transactionsEndpoint: str
-) -> list:
-    all_transactions = []
-    urls = [transactionsEndpoint]
-    next_url = urls[0]
-    while next_url is not None and len(urls) < 10:
-        response = requests.get(
-            next_url, headers={"Authorization": "Bearer " + token}, params=params
+    token: str, start_date: datetime, end_date: datetime
+) -> list[up_api.TransactionData]:
+    all_transactions: list[up_api.TransactionData]
+    urls = []
+
+    result = up_api.retrieve_all_transactions(token, start_date, end_date)
+    all_transactions = result.data
+    while result.links.next is not None and len(urls) < 10:
+        result = up_api.retrieve_all_transactions(
+            token, start_date, end_date, result.links.next
         )
-        all_transactions.extend(response.json()["data"])
-        next_url = response.json()["links"]["next"]
-        urls.append(next_url)
+        all_transactions.extend(result.data)
+        urls.append(result.links.next)
     return all_transactions
 
 
@@ -50,19 +66,20 @@ def get_accounts(token: str) -> list[dict]:
     return accounts
 
 
-def transform_row(transaction: dict) -> dict:
+def transform_row(transaction: dict) -> DataRow:
     attributes_dict = transaction["attributes"]
     attributes_dict.update({"amount": transaction["attributes"]["amount"]["value"]})
     holdInfo = (
         transaction["attributes"]["holdInfo"].get("value")
-        if transaction["attributes"]["holdInfo"] != None
+        if transaction["attributes"]["holdInfo"] is not None
         else None
     )
     attributes_dict.update({"holdInfo": holdInfo})
     category = (
         transaction["relationships"]["category"]["data"].get("id")
-        if transaction["relationships"]["category"]["data"] != None
+        if transaction["relationships"]["category"]["data"] is not None
         else None
     )
     attributes_dict.update({"category": category})
-    return attributes_dict
+    breakpoint()
+    return DataRow(**attributes_dict)

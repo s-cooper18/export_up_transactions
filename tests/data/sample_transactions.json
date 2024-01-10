@@ -1,0 +1,68 @@
+{
+    "data": [
+      {
+        "type": "transactions",
+        "id": "f22558e7-2b8f-40ab-9c68-f6f6e55b9fe1",
+        "attributes": {
+          "status": "SETTLED",
+          "rawText": null,
+          "description": "David Taylor",
+          "message": "Money for the pizzas last night.",
+          "isCategorizable": true,
+          "holdInfo": null,
+          "roundUp": null,
+          "cashback": null,
+          "amount": {
+            "currencyCode": "AUD",
+            "value": "-59.98",
+            "valueInBaseUnits": -5998
+          },
+          "foreignAmount": null,
+          "cardPurchaseMethod": null,
+          "settledAt": "2024-01-04T05:44:29+11:00",
+          "createdAt": "2024-01-04T05:44:29+11:00"
+        },
+        "relationships": {
+          "account": {
+            "data": {
+              "type": "accounts",
+              "id": "37671a19-eaf4-4f08-a4dd-706a0784ad9d"
+            },
+            "links": {
+              "related": "https://api.up.com.au/api/v1/accounts/37671a19-eaf4-4f08-a4dd-706a0784ad9d"
+            }
+          },
+          "transferAccount": {
+            "data": null
+          },
+          "category": {
+            "data": null,
+            "links": {
+              "self": "https://api.up.com.au/api/v1/transactions/f22558e7-2b8f-40ab-9c68-f6f6e55b9fe1/relationships/category"
+            }
+          },
+          "parentCategory": {
+            "data": null
+          },
+          "tags": {
+            "data": [
+              {
+                "type": "tags",
+                "id": "Pizza Night"
+              }
+            ],
+            "links": {
+              "self": "https://api.up.com.au/api/v1/transactions/f22558e7-2b8f-40ab-9c68-f6f6e55b9fe1/relationships/tags"
+            }
+          }
+        },
+        "links": {
+          "self": "https://api.up.com.au/api/v1/transactions/f22558e7-2b8f-40ab-9c68-f6f6e55b9fe1"
+        }
+      }
+    ],
+    "links": {
+      "prev": null,
+      "next": null
+    }
+  }

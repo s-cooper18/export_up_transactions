@@ -1,4 +1,6 @@
-import helper_functions
+from pytest_mock import MockerFixture
+from datetime import datetime
+import src.helper_functions as helper_functions
 import pytest
 
 
@@ -15,3 +17,18 @@ def test_calc_start_end_strings_returns_rfc3339_datetime(
     result = helper_functions.calc_start_end_strings(month, year)
     assert result[0] == expected_start
     assert result[1] == expected_end
+
+
+class TestRetrieveAllTransactions:
+    def test_happy_path(
+        self, mocker: MockerFixture, transaction_response: dict[str, object]
+    ):
+        mock_transactions = mocker.patch(
+            "src.up_api.retrieve_all_transactions", return_value=transaction_response
+        )
+        result = helper_functions.retrieve_all_transactions(
+            "any_token", datetime.now(), datetime.now()
+        )
+        mock_transactions.assert_called_once()
+        assert len(result) == 1
+        result[0] == transaction_response
